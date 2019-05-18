@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo Page</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <style>
+* {
+  box-sizing: border-box;
+  margin: 4px;
+  padding: 1px;
+  /*padding: 3px;*/
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+h3{
+  font-size: 0.75em;
+}
+
+p{
+  font-size: 0.5em;
+}
+
+/* Float four columns side by side */
+.column {
+  float: left;
+  /*width: 33%;*/
+  width: 190px
+  /* padding: 10px 10px; */
+}
+
+img{
+  height: 60%;
+  margin: 0;
+}
+
+/* Remove extra left and right margins, due to padding */
+.row {margin: -5px -5px;}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+<!--/* Responsive columns */-->
+<!--@media screen and (max-width: 600px) {-->
+  <!--.column {-->
+    <!--width: 100%;-->
+    <!--display: block;-->
+    <!--/*margin-bottom: 20px;*/-->
+  <!--}-->
+<!--}-->
+
+/* Style the counter cards */
+.card {
+  height : 180px;
+  /*padding: 16px;*/
+  padding: 0px;
+  text-align: left;
+  /*text-align: center;*/
+}
+.card:hover{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  background-color: #f1f1f1;
+}
+
+/* ============ DropDown =================== */
+
+.dropbtn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+#myInput {
+  border-box: box-sizing;
+
+  background-position: 14px 12px;
+  background-repeat: no-repeat;
+  font-size: 16px;
+  padding: 14px 20px 12px 45px;
+  border: none;
+  border-bottom: 1px solid #ddd;
+}
+
+#myInput:focus {outline: 3px solid #ddd;}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f6f6f6;
+  min-width: 230px;
+  height: 250px;
+  overflow: auto;
+  border: 1px solid #ddd;
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  font-size: 10px;
+  display: block;
+  /*z-index:2;*/
+}
+
+.dropdown a:hover {background-color: #ddd;}
+
+.show {display: block;}
+
+
+    </style>
+
+</head>
+<body>
+<div style="width:100%;">
+<div style="height:400px; width: 600px; margin:auto; ">
+    <div>
+        <div style="float: left; font-size:15px"><b>You May Like</b></div>
+        <div style="float: right; font-size:10px;">Sponsored Links by T_____a</div>
+        <div style="clear: both;"></div>
+    </div>
+    <div class="row">
+        <div class="column">
+            <div class="card" id="tbc1">
+                <img src="" style="width:100%">
+                <h3>Content</h3>
+                <p>Company name</p>
+            </div>
+        </div>
+        <div class="column">
+            <div class="card" id="tbc2">
+                <img src="" style="width:100%">
+                <h3>Content</h3>
+                <p>Company name</p>
+            </div>
+        </div>
+        <div class="column">
+            <div class="card" id="tbc3">
+                <img src="" style="width:100%">
+                <h3>Content</h3>
+                <p>Company name</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            <div class="card" id="tbc4">
+                <img src="" style="width:100%">
+                <h3>Content</h3>
+                <p>Company name</p>
+            </div>
+        </div>
+        <div class="column">
+            <div class="card" id="tbc5">
+                <img src="" style="width:100%">
+                <h3>Content</h3>
+                <p>Company name</p>
+            </div>
+        </div>
+        <div class="column">
+            <div class="card" id="tbc6">
+                <img src="" style="width:100%">
+                <h3>Content</h3>
+                <p>Company name</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="width: 600px; margin:auto;">
+    <label> Entre PreSet Number up to 5, the -1 is empty set</label>
+
+    <input id="preSetNum" type="number" min="-1" value="-1">
+</div>
+<div class="dropdown">
+    <div id="myDropdown" class="dropdown-content">
+        <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
+    </div>
+</div>
+</div>
+<script>
+$(document).ready(function() {
+    var pageURL = document.location.origin;
+
+    function presetFillIn(num){
+        if (num == -1) {
+            for( var i = 1; i < 7; i++){
+                fillElement(i ,{"id":null,"imgUrl":"","content":"","brand":"","loc":""});
+            }
+        }else{
+            $.ajax({
+                url: pageURL + "/REST/preset/" + num})
+                .then(function(data) {
+                <!--fillElement(cardId,data);-->
+                for (i=1; i<7; i++){
+                    fillElement(i, data["tbc" + i]);
+                }
+        });
+        }
+    }
+
+    $("#preSetNum").change(function(){
+        presetFillIn($("#preSetNum").val());
+    });
+
+    var picList;
+         $.ajax({
+            url: pageURL + "/REST/getAll/"})
+            .then(function(data) {
+            picList = data;
+            picList.forEach(function(element) {
+                var txt = $("<a></a>").text(element["loc"] + " " + element["com"]);   // Create with jQuery
+                txt.attr('id', element.id);
+                txt.addClass("theClick");
+                $("#myDropdown").append(txt);
+            });
+         });
+
+    var itm ;
+
+    $(".card").click(function(e) {
+        itm = this.id.slice(-1);
+        document.getElementById("myDropdown").classList.toggle("show");
+        $(".dropdown").parent().css({position: 'relative'});
+        $(".dropdown").css({top: e.pageY -10, left: e.pageX -10, position:'absolute'});
+    });
+
+    $('#myDropdown').on('click', 'a.theClick', function(event){
+        getCard(event.target.id, itm);
+        document.getElementById("myDropdown").classList.toggle("show");
+    });
+
+    function getCard(dataId, cardId){
+        $.ajax({
+            url: pageURL + "/REST/getById/" + dataId})
+            .then(function(data) {
+            fillElement(cardId,data);
+        });
+    };
+
+    function fillElement( cardId, content){
+        $("#tbc"+ cardId +"> h3").text(content["content"]);
+        $("#tbc"+ cardId +"> p").text(content["brand"]);
+        $("#tbc"+ cardId +"> img").attr("src",content["imgUrl"]);
+    }
+
+});
+
+/* ============= DropDown =================== */
+/* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+
+function filterFunction() {
+  var input, filter, ul, li, a, i;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  div = document.getElementById("myDropdown");
+  a = div.getElementsByTagName("a");
+  for (i = 0; i < a.length; i++) {
+    txtValue = a[i].textContent || a[i].innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      a[i].style.display = "";
+    } else {
+      a[i].style.display = "none";
+    }
+  }
+}
+
+
+</script>
+
+</body>
+</html>
